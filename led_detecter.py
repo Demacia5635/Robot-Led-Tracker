@@ -1,8 +1,11 @@
 import cv2
 import numpy as np
 
-CAM_INDEX = 0  
-USING_LIMELIGHT = False 
+# Simply detects the leds and does nothing with them.
+
+
+CAM_INDEX = 0
+USING_LIMELIGHT = False
 USING_RECORDING = True
 LIMELIGHT_URL = "http://10.0.127.18:5802"
 RECORDING_PATH = "recording_20260930_185231.mp4"
@@ -36,10 +39,12 @@ while True:
         break
 
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    
-    _, thresh = cv2.threshold(gray_frame, BRIGHTNESS_THRESH, 255, cv2.THRESH_BINARY)
-    
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    _, thresh = cv2.threshold(
+        gray_frame, BRIGHTNESS_THRESH, 255, cv2.THRESH_BINARY)
+
+    contours, _ = cv2.findContours(
+        thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     led_centers = []
 
