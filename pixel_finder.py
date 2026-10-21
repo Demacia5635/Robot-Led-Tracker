@@ -3,9 +3,9 @@ import cv2
 # A tool to find the pixel coordinates of points in a video stream or recording
 
 
-CAM_INDEX = 0
+CAM_INDEX = 1
 USING_LIMELIGHT = False
-USING_RECORDING = True
+USING_RECORDING = False
 
 LIMELIGHT_URL = "http://10.0.127.18:5802"
 RECORDING_PATH = r"C:\Users\liorp\Projects\roboticsTesting\VisionTesting\recording_20260930_185231.mp4"

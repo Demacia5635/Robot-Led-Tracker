@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-CAM_INDEX = 0
+CAM_INDEX = 1
 
 # ===== CONFIGURATION (check before running) =====
 USING_LIMELIGHT = False
@@ -35,13 +35,13 @@ if not capture.isOpened():
 if not USING_RECORDING and not USING_LIMELIGHT:
     pass
     # Disable auto-exposure (0.25 or 0 forces manual mode)
-    # capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25) 
-    
+    capture.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
+
     # # Set manual exposure (Negative values = darker image: -4, -5, -6)
-    # capture.set(cv2.CAP_PROP_EXPOSURE, -5)
-    
+    capture.set(cv2.CAP_PROP_EXPOSURE, -3)
+
     # # Adjust brightness (0 to 255)
-    # capture.set(cv2.CAP_PROP_BRIGHTNESS, 120)
+    capture.set(cv2.CAP_PROP_BRIGHTNESS, 125)
 # ===============================================================
 
 BRIGHTNESS_THRESH = 100
@@ -50,17 +50,20 @@ MIN_AREA = 0
 # ============ POINTS CALIBRATION ===========
 # 1. Get pixels from pixel_finder.py
 # 2. Measure physical meters from field (0,0) corner
-P1_PIXEL = (150, 600)       # Clicked pixel coordinates for Point 1
-P1_FIELD = (0.0, 0.0)       # Real world meters for Point 1
+P1_PIXEL = (540, 422)       # Clicked pixel coordinates for Point 1
+P1_FIELD = (5.35, 1.35)       # Real world meters for Point 1
 
-P2_PIXEL = (750, 600)       # Clicked pixel coordinates for Point 2
-P2_FIELD = (4.0, 0.0)       # Real world meters for Point 2
+P2_PIXEL = (90, 220)       # Clicked pixel coordinates for Point 2
+P2_FIELD = (7.63, 1.7)       # Real world meters for Point 2
 # ============================================
 
-pixel_distance = math.hypot(P2_PIXEL[0] - P1_PIXEL[0], P2_PIXEL[1] - P1_PIXEL[1])
-field_distance = math.hypot(P2_FIELD[0] - P1_FIELD[0], P2_FIELD[1] - P1_FIELD[1])
+pixel_distance = math.hypot(
+    P2_PIXEL[0] - P1_PIXEL[0], P2_PIXEL[1] - P1_PIXEL[1])
+field_distance = math.hypot(
+    P2_FIELD[0] - P1_FIELD[0], P2_FIELD[1] - P1_FIELD[1])
 
-PIXELS_PER_METER = pixel_distance / field_distance if field_distance > 0 else 100.0
+PIXELS_PER_METER = pixel_distance / \
+    field_distance if field_distance > 0 else 100.0
 
 ORIGIN_PIXEL_X = P1_PIXEL[0]
 ORIGIN_PIXEL_Y = P1_PIXEL[1]
@@ -74,7 +77,8 @@ while True:
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray, BRIGHTNESS_THRESH, 255, cv2.THRESH_BINARY)
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(
+        thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     led_points = []
     for C in contours:
@@ -90,14 +94,17 @@ while True:
         position_px = led_points[0]
         heading_px = led_points[1]
 
-        field_x = FIELD_ORIGIN_X + (position_px[0] - ORIGIN_PIXEL_X) / PIXELS_PER_METER
-        field_y = FIELD_ORIGIN_Y + (ORIGIN_PIXEL_Y - position_px[1]) / PIXELS_PER_METER
+        field_x = FIELD_ORIGIN_X + \
+            (position_px[0] - ORIGIN_PIXEL_X) / PIXELS_PER_METER
+        field_y = FIELD_ORIGIN_Y + \
+            (ORIGIN_PIXEL_Y - position_px[1]) / PIXELS_PER_METER
 
         dx = heading_px[0] - position_px[0]
         dy = position_px[1] - heading_px[1]
         heading_rad = math.atan2(dy, dx)
 
-        print(f"X: {field_x:.2f}m | Y: {field_y:.2f}m | Heading: {math.degrees(heading_rad):.1f} deg")
+        print(
+            f"X: {field_x:.2f}m | Y: {field_y:.2f}m | Heading: {math.degrees(heading_rad):.1f} deg")
 
     cv2.imshow(window_name, frame)
 
