@@ -8,7 +8,7 @@ USING_LIMELIGHT = False
 USING_RECORDING = False
 
 LIMELIGHT_URL = "http://10.0.127.18:5802"
-RECORDING_PATH = r"C:\Users\liorp\Projects\roboticsTesting\VisionTesting\recording_20260930_185231.mp4"
+RECORDING_PATH = r"recording_20260930_185231.mp4"
 
 if USING_RECORDING:
     stream_type = RECORDING_PATH
